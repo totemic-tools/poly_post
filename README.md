@@ -2,6 +2,10 @@
 
 A customizable publishing engine with markdown and code highlighting support
 
+## Features
+
+TBA
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
@@ -15,6 +19,10 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/poly_post>.
+## Usage
+
+TBA
+
+## License
+
+This software is licensed under the [Apache-2.0 License](LICENSE).
