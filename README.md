@@ -1,20 +1,21 @@
 # PolyPost
 
-A customizable publishing engine with markdown and code highlighting support
+A customizable publishing engine with markdown and code highlighting support.
+
+## Features
+
+* Supports markdown with structured metadata
+* Loads files directly from configured paths
+* Supports multiple resource types
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `poly_post` to your list of dependencies in `mix.exs`:
+TBA
 
-```elixir
-def deps do
-  [
-    {:poly_post, "~> 0.1.0"}
-  ]
-end
-```
+## Usage
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/poly_post>.
+TBA
+
+## License
+
+This software is licensed under the [Apache-2.0 License](LICENSE).
