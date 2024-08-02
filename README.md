@@ -1,23 +1,16 @@
 # PolyPost
 
-A customizable publishing engine with markdown and code highlighting support
+A customizable publishing engine with markdown and code highlighting support.
 
 ## Features
 
-TBA
+* Supports markdown with structured metadata
+* Loads files directly from configured paths
+* Supports multiple resource types
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `poly_post` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:poly_post, "~> 0.1.0"}
-  ]
-end
-```
+TBA
 
 ## Usage
 
