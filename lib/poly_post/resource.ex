@@ -4,18 +4,11 @@ defmodule PolyPost.Resource do
   """
   @moduledoc since: "0.1.0"
 
-  @type key :: term()
-  @type content :: term()
-  @type tag :: atom()
-
   @doc """
-  Defines a way to return the desired term for the resource.
+  Defines a way to return the desired content from the resource.
 
-  The `map` MAY contain other keys but MUST have the following keys:
-
-  * `key`
-  * `content`
+  This MAY return other keys but MUST have have a key named `key`.
   """
   @doc since: "0.1.0"
-  @callback build(reference :: String.t, metadata :: Keyword.t, body :: String.t) :: %{key: key(), content: content()}
+  @callback build(reference :: String.t, metadata :: Keyword.t, body :: String.t) :: %{key: term()}
 end
