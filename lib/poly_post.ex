@@ -1,27 +1,19 @@
 defmodule PolyPost do
-  use Supervisor
+  use Application
 
   # API
 
-  def start_link do
-    Supervisor.start_link(__MODULE__, [], name: __MODULE__)
-  end
-
-  # Callbacks
-
-  def child_spec(_) do
-    %{
-      id: __MODULE__,
-      type: :supervisor,
-      start: {__MODULE__, :start_link, []}
-    }
-  end
-
-  def init(_) do
+  @impl true
+  def start(_type, _args) do
     children = [
       {Registry, [keys: :unique, name: PolyPost.Registry]}
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
+    opts = [
+      strategy: :one_for_one,
+      name: __MODULE__
+    ]
+
+    Supervisor.start_link(children, opts)
   end
 end
