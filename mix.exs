@@ -13,6 +13,7 @@ defmodule PolyPost.MixProject do
 
   def application do
     [
+      mod: {PolyPost, []},
       extra_applications: [:logger]
     ]
   end
