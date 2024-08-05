@@ -11,7 +11,7 @@ defmodule PolyPost do
 
     opts = [
       strategy: :one_for_one,
-      name: :poly_post
+      name: __MODULE__
     ]
 
     Supervisor.start_link(children, opts)
