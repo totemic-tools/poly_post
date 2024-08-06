@@ -4,11 +4,14 @@ defmodule PolyPost.Resource do
   """
   @moduledoc since: "0.1.0"
 
+  @type key :: term()
+  @type content :: %{key: key()}
+
   @doc """
   Defines a way to return the desired content from the resource.
 
   This MAY return other keys but MUST have have a key named `key`.
   """
   @doc since: "0.1.0"
-  @callback build(reference :: String.t, metadata :: Keyword.t, body :: String.t) :: %{key: term()}
+  @callback build(reference :: String.t, metadata :: Keyword.t, body :: String.t) :: content()
 end
