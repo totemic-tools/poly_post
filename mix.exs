@@ -20,6 +20,9 @@ defmodule PolyPost.MixProject do
 
   defp deps do
     [
+      {:earmark, "~> 1.4"},
+      {:jason, "~> 1.4"},
+      {:makeup, "~> 1.1"}
     ]
   end
 end
