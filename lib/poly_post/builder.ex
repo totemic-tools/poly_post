@@ -1,43 +1,26 @@
 defmodule PolyPost.Builder do
-  alias PolyPost.Depot
+  @moduledoc """
+  A module used for building content from Markdown files (resources).
+  """
+
+  alias PolyPost.Resource
 
   # API
 
-  @spec build!(atom()) :: :ok
-  def build!(resource) do
-    resource
-    |> build_content!()
-    |> save_content(resource)
+  @doc """
+  Builds a list of content for a specific marddown + metadata resource.
+  """
+  @spec build!(Resource.name()) :: [Resource.content()]
+  def build!(resource), do: build_content!(resource)
 
-    :ok
-  end
-
-  @spec build_all!() :: :ok
+  @doc """
+  Builds all the content for each resource.
+  """
+  @spec build_all!() :: [{Resource.name(), [Resource.content()]}]
   def build_all! do
-    Enum.map(get_config(), fn resource ->
-      build_content!(resource) |> save_content(resource)
-    end)
-
-    :ok
-  end
-
-  @spec build_via_paths!(module(), Path.t | [Path.t]) :: [struct()]
-  def build_via_paths!(module, paths, content \\ [])
-  def build_via_paths!(_module, [], content), do: content
-  def build_via_paths!(module, path, content) when is_binary(path), do: build_via_paths!(module, [path], content)
-  def build_via_paths!(module, [path|paths], content) do
-    new_content = path
-    |> Path.wildcard()
-    |> Enum.reduce(content, fn filepath, acc -> [build_via_filepath!(module, filepath) | acc] end)
-
-    build_via_paths!(module, paths, new_content)
-  end
-
-  @spec build_via_filepath!(module(), Path.t) :: struct()
-  def build_via_filepath!(module, filepath) do
-    filename = Path.basename(filepath)
-    {metadata, body} = extract_content!(filepath)
-    apply(module, :build, [filename, metadata, body])
+    get_config()
+    |> get_in([:content])
+    |> Enum.map(fn {resource, _} -> {resource, build_content!(resource)} end)
   end
 
   # Private
@@ -47,6 +30,23 @@ defmodule PolyPost.Builder do
       {module, {:path, paths}} -> build_via_paths!(module, paths)
       _ -> :ok
     end
+  end
+
+  defp build_via_filepath!(module, filepath) do
+    filename = Path.basename(filepath)
+    {metadata, body} = extract_content!(filepath)
+    apply(module, :build, [filename, metadata, body])
+  end
+
+  def build_via_paths!(module, paths, content \\ [])
+  def build_via_paths!(_module, [], content), do: content
+  def build_via_paths!(module, path, content) when is_binary(path), do: build_via_paths!(module, [path], content)
+  def build_via_paths!(module, [path|paths], content) do
+    new_content = path
+    |> Path.wildcard()
+    |> Enum.reduce(content, fn filepath, acc -> [build_via_filepath!(module, filepath) | acc] end)
+
+    build_via_paths!(module, paths, new_content)
   end
 
   defp extract_content!(path) do
@@ -78,12 +78,6 @@ defmodule PolyPost.Builder do
 
   defp get_config(resource) do
     get_config() |> get_in([:content, resource])
-  end
-
-  defp save_content(content, resource) do
-    Enum.each(content, fn %{key: key} = data ->
-      Depot.insert(resource, key, data)
-    end)
   end
 
   defp transform_all_content(raw_content) do

@@ -6,6 +6,7 @@ defmodule PolyPost.MixProject do
       app: :poly_post,
       version: "0.1.0",
       elixir: "~> 1.17",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -25,4 +26,7 @@ defmodule PolyPost.MixProject do
       {:makeup, "~> 1.1"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/fixtures"]
+  defp elixirc_paths(_), do: ["lib"]
 end

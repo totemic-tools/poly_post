@@ -1,27 +1,7 @@
 defmodule PolyPost.DepotTest do
   use ExUnit.Case, async: false
 
-  alias PolyPost.{
-    Depot,
-    Resource
-  }
-
-  defmodule TestArticle do
-    @behaviour Resource
-
-    @enforce_keys [:key, :title, :author, :body]
-    defstruct [:key, :author, :title, :body]
-
-    @impl Resource
-    def build(reference, metadata, body) do
-      %__MODULE__{
-        key: reference,
-        title: get_in(metadata, [:title]),
-        author: get_in(metadata, [:author]),
-        body: body
-      }
-    end
-  end
+  alias PolyPost.Depot
 
   @table :test_articles
 
