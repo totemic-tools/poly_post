@@ -4,6 +4,7 @@ defmodule PolyPost.Resource do
   """
   @moduledoc since: "0.1.0"
 
+  @type name :: atom()
   @type key :: term()
   @type content :: %{key: key()}
 
