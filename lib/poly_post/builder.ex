@@ -38,10 +38,10 @@ defmodule PolyPost.Builder do
     apply(module, :build, [filename, metadata, body])
   end
 
-  def build_via_paths!(module, paths, content \\ [])
-  def build_via_paths!(_module, [], content), do: content
-  def build_via_paths!(module, path, content) when is_binary(path), do: build_via_paths!(module, [path], content)
-  def build_via_paths!(module, [path|paths], content) do
+  defp build_via_paths!(module, paths, content \\ [])
+  defp build_via_paths!(_module, [], content), do: content
+  defp build_via_paths!(module, path, content) when is_binary(path), do: build_via_paths!(module, [path], content)
+  defp build_via_paths!(module, [path|paths], content) do
     new_content = path
     |> Path.wildcard()
     |> Enum.reduce(content, fn filepath, acc -> [build_via_filepath!(module, filepath) | acc] end)
@@ -58,14 +58,14 @@ defmodule PolyPost.Builder do
     {metadata, body}
   end
 
-  def extract_metadata!(raw_metadata) do
+  defp extract_metadata!(raw_metadata) do
     case Jason.decode(raw_metadata) do
       {:ok, metadata} -> metadata
       {:error, error} -> raise error
     end
   end
 
-  def extract_parts!(content) do
+  defp extract_parts!(content) do
     case String.split(content, ["\n---\n", "\r\n---\r\n"], parts: 2) do
       [metadata, content] -> {metadata, content}
       _ -> raise PolyPost.MissingMetadataError, "Missing metadata at beginning of file."
