@@ -11,7 +11,8 @@ defmodule PolyPost do
   @impl true
   def start(_type, _args) do
     children = [
-      {Registry, [keys: :unique, name: PolyPost.Registry]}
+      {Registry, [keys: :unique, name: PolyPost.Registry]} |
+      depot_processes()
     ]
 
     opts = [
@@ -48,6 +49,16 @@ defmodule PolyPost do
   end
 
   # Private
+
+  defp depot_processes do
+    :poly_post
+    |> Application.fetch_env!(:resources)
+    |> Keyword.fetch!(:content)
+    |> Keyword.keys()
+    |> Enum.map(fn table ->
+      Supervisor.child_spec({Depot, table}, id: table)
+    end)
+  end
 
   defp store_content(content, resource) do
     Enum.each(content, fn %{key: key} = data ->
