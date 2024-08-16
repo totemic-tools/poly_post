@@ -3,6 +3,7 @@ defmodule PolyPost do
 
   alias PolyPost.{
     Builder,
+    Depots,
     Depot
   }
 
@@ -11,7 +12,8 @@ defmodule PolyPost do
   @impl true
   def start(_type, _args) do
     children = [
-      {Registry, [keys: :unique, name: PolyPost.Registry]}
+      {Registry, [keys: :unique, name: PolyPost.Registry]},
+      Depots
     ]
 
     opts = [
