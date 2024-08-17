@@ -42,7 +42,8 @@ defmodule PolyPost do
   """
   @spec build_and_store_all!() :: :ok
   def build_and_store_all! do
-    Builder.build_all!() |> Enum.each(fn {resource, content} ->
+    Builder.build_all!()
+    |> Enum.each(fn {resource, content} ->
       store_content(content, resource)
     end)
 

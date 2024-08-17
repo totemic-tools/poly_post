@@ -15,9 +15,7 @@ defmodule PolyPost.Depots do
   end
 
   def child_spec(_) do
-    %{id: __MODULE__,
-      start: {__MODULE__, :start_link, []},
-      type: :supervisor}
+    %{id: __MODULE__, start: {__MODULE__, :start_link, []}, type: :supervisor}
   end
 
   # Private
@@ -38,7 +36,8 @@ defmodule PolyPost.Depots do
       {:ok, content} ->
         content
         |> Keyword.keys()
-        |> Enum.map(fn table -> Supervisor.child_spec({Depot, table}, id: table)  end)
+        |> Enum.map(fn table -> Supervisor.child_spec({Depot, table}, id: table) end)
+
       :error ->
         []
     end

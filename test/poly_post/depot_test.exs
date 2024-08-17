@@ -8,11 +8,12 @@ defmodule PolyPost.DepotTest do
   setup do
     start_supervised({Depot, @table})
 
-    {:ok, article: %TestArticle{
-        key: "my_article.md",
-        title: "My Article",
-        author: "Me",
-        body: "This is my article"
+    {:ok,
+     article: %TestArticle{
+       key: "my_article.md",
+       title: "My Article",
+       author: "Me",
+       body: "This is my article"
      }}
   end
 
