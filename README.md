@@ -4,12 +4,14 @@ A customizable publishing engine with markdown and code highlighting support.
 
 ## Features
 
-* Supports markdown with structured metadata in JSON
 * Loads files directly from configured paths
+* Stores content in single process-owned ETS tables
+* Supports markdown with structured metadata in JSON
 * Supports multiple directories with markdown files that can be specified as different resources
 * Supports code highlighting in `code` blocks using [makeup](https://github.com/elixir-makeup/makeup)
-* Stores content in single process-owned ETS tables
-* Can update content during runtime by calling `PolyPost.build_and_store!/1` or `PolyPost.build_and_store_all!/0`
+* Update content during runtime by calling:
+  * `PolyPost.build_and_store!/1`
+  * `PolyPost.build_and_store_all!/0`
 
 ## Installation
 
