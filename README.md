@@ -1,6 +1,6 @@
 # PolyPost
 
-A customizable publishing engine with markdown and code highlighting support.
+A publishing engine with markdown and code highlighting support.
 
 ## Features
 
