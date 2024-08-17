@@ -99,13 +99,13 @@ end
 
 Then you can use tags in your markdown code blocks like so:
 
-```markdown
+````markdown
 ```elixir
 def start_link(arg) do
   GenServer.start_link(__MODULE__, arg, name: __MODULE__)
 end
 ```
-```
+````
 
 ## Differences from NimblePublisher
 
