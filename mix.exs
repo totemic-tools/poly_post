@@ -13,6 +13,8 @@ defmodule PolyPost.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      description: description(),
+      package: package(),
       source_url: @source_url,
       homepage_url: @source_url
     ]
