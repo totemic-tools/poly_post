@@ -1,4 +1,4 @@
-# PolyPost
+# PolyPost [![Hex Version](https://img.shields.io/hexpm/v/poly_post.svg)](https://hex.pm/packages/poly_post) [![Hex Docs](https://img.shields.io/badge/docs-hexpm-blue.svg)](https://hexdocs.pm/poly_post/)
 
 A publishing engine with markdown and code highlighting support.
 
