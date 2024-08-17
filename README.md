@@ -21,7 +21,7 @@ def deps do
 end
 ```
 
-Then in any of your desired `config/{config,dev,prod,test}.exs` files
+In any of the `config/{config,dev,prod,test}.exs` files
 you can configure each resources for your content:
 
 ```elixir
@@ -33,7 +33,9 @@ config :poly_post, :resources,
 
 ## Basic Usage
 
-If you have a file called `my_article1.md` in the configured directory:
+### Loading and Storing Content
+
+With a file called `my_article1.md` in the configured directory:
 
 ```markdown
 {
@@ -46,8 +48,8 @@ If you have a file called `my_article1.md` in the configured directory:
 This is my first article
 ```
 
-Then, I can create an `Article` module with the following to load your
-content in a structured way to your app:
+You can create an `Article` module to load your content by
+implementing the `PolyPost.Resource.build/3` callback:
 
 ```elixir
 defmodule Article do
@@ -70,15 +72,18 @@ defmodule Article do
 end
 ```
 
-When I call `PolyPost.build_and_store_all!/0`, it will:
-
-1. Load all themarkdown files
-2. Call `Article.build/3` with the `reference` (filename), `metadata` and `content`
-3. It will return a struct specified as you wish.
-
 The only requirement is that the struct or map **MUST** contain a key
 called `key` that uniquely identifies this content. It **MUST** be a
 `String`.
+
+When I call `PolyPost.build_and_store_all!/0`, it will:
+
+1. Load and parse all the markdown files and their metadata
+2. Replace all `code` blocks with highlighted versions if a highlighter is .
+2. Call `Article.build/3` with the `reference` (filename), `metadata` and `content`
+3. Then it stores it in a corresponding `PolyPost.Depot` process.
+
+### Using Makeup to Style Code Blocks
 
 If you wish to use [makeup](https://github.com/elixir-makeup/makeup) to style your `code` blocks, you must
 specify the needed dependencies in your `mix.exs` file.
@@ -97,7 +102,8 @@ defp deps do
 end
 ```
 
-Then you can use tags in your markdown code blocks like so:
+Then you can use tags in your markdown code blocks like so and it will
+automatically highlight them:
 
 ````markdown
 ```elixir
@@ -106,6 +112,28 @@ def start_link(arg) do
 end
 ```
 ````
+
+### Retrieving Content
+
+You can retrieve content using the functions on the `PolyPost.Depot`
+module to access the associated ETS table that stores your data:
+
+1. `find/2` - find a specific content by `key` for the resource
+2. `get_all/1` - gets all content for a resource
+
+For example:
+
+```elixir
+PolyPost.Depot.find(:articles, "my_article1.md")
+=> %Article{...}
+```
+
+and
+
+```elixir
+PolyPost.Depot.get_all(:articles)
+=> [%Article{...}]
+```
 
 ## Differences from NimblePublisher
 
