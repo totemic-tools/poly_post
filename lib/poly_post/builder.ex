@@ -40,11 +40,17 @@ defmodule PolyPost.Builder do
 
   defp build_via_paths!(module, paths, content \\ [])
   defp build_via_paths!(_module, [], content), do: content
-  defp build_via_paths!(module, path, content) when is_binary(path), do: build_via_paths!(module, [path], content)
-  defp build_via_paths!(module, [path|paths], content) do
-    new_content = path
-    |> Path.wildcard()
-    |> Enum.reduce(content, fn filepath, acc -> [build_via_filepath!(module, filepath) | acc] end)
+
+  defp build_via_paths!(module, path, content) when is_binary(path),
+    do: build_via_paths!(module, [path], content)
+
+  defp build_via_paths!(module, [path | paths], content) do
+    new_content =
+      path
+      |> Path.wildcard()
+      |> Enum.reduce(content, fn filepath, acc ->
+        [build_via_filepath!(module, filepath) | acc]
+      end)
 
     build_via_paths!(module, paths, new_content)
   end
@@ -81,22 +87,28 @@ defmodule PolyPost.Builder do
   end
 
   defp transform_all_content(raw_content) do
-    Earmark.as_html!(raw_content, escape: false, registered_processors: [{"code", &transform_code_content/1}])
+    Earmark.as_html!(raw_content,
+      escape: false,
+      registered_processors: [{"code", &transform_code_content/1}]
+    )
   end
 
   defp transform_code_content({_tag, attrs, content, _meta} = ast) do
     attr_list = Enum.flat_map(attrs, fn list -> Tuple.to_list(list) end)
 
-    marker = Makeup.Registry.supported_language_names()
-    |> Enum.find(&(Enum.member?(attr_list, &1)))
+    marker =
+      Makeup.Registry.supported_language_names()
+      |> Enum.find(&Enum.member?(attr_list, &1))
 
     case Makeup.Registry.fetch_lexer_by_name(marker) do
       {:ok, {lexer, opts}} ->
-        new_content = content
-        |> IO.iodata_to_binary()
-        |> Makeup.highlight_inner_html(lexer: lexer, lexer_options: opts)
+        new_content =
+          content
+          |> IO.iodata_to_binary()
+          |> Makeup.highlight_inner_html(lexer: lexer, lexer_options: opts)
 
         {:replace, ~s(<code class="highlight">#{new_content}</code>)}
+
       :error ->
         ast
     end

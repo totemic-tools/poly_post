@@ -14,5 +14,6 @@ defmodule PolyPost.Resource do
   This MAY return other keys but MUST have have a key named `key`.
   """
   @doc since: "0.1.0"
-  @callback build(reference :: String.t, metadata :: Keyword.t, body :: String.t) :: content()
+  @callback build(reference :: String.t(), metadata :: Keyword.t(), body :: String.t()) ::
+              content()
 end
