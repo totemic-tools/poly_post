@@ -6,7 +6,7 @@ A customizable publishing engine with markdown and code highlighting support.
 
 * Supports markdown with structured metadata in JSON
 * Loads files directly from configured paths
-* Supports multiple directories with markdown that can be specified as different resources
+* Supports multiple directories with markdown files that can be specified as different resources
 * Supports code highlighting in `code` blocks using [makeup](https://github.com/elixir-makeup/makeup)
 * Stores content in single process-owned ETS tables
 * Can update content during runtime by calling `PolyPost.build_and_store!/1` or `PolyPost.build_and_store_all!/0`
@@ -22,7 +22,7 @@ end
 ```
 
 Then in any of your desired `config/{config,dev,prod,test}.exs` files
-you can add the following to configure each resource:
+you can configure each resources for your content:
 
 ```elixir
 config :poly_post, :resources,
@@ -33,7 +33,7 @@ config :poly_post, :resources,
 
 ## Basic Usage
 
-If I have a file called `my_article1.md` in the configured directory:
+If you have a file called `my_article1.md` in the configured directory:
 
 ```markdown
 {
@@ -46,10 +46,8 @@ If I have a file called `my_article1.md` in the configured directory:
 This is my first article
 ```
 
-*NOTE*: The metadata is interpreted as JSON, not as Elixir.
-
-Then, I can create an `Article` module with the following to load my
-content in a structured way to my app:
+Then, I can create an `Article` module with the following to load your
+content in a structured way to your app:
 
 ```elixir
 defmodule Article do
@@ -72,18 +70,21 @@ defmodule Article do
 end
 ```
 
-When I call `PolyPost.build_and_store_all!/0`, it will load all the
-markdown files, call `Article.build/3` with the `reference`
-(filename), `metadata` and `content` and return a struct specified as
-you wish.
+When I call `PolyPost.build_and_store_all!/0`, it will:
 
-The only requirement is that the struct or map *MUST* contain a key
-called `key` that uniquely identifies this content. It *MUST* be a
+1. Load all themarkdown files
+2. Call `Article.build/3` with the `reference` (filename), `metadata` and `content`
+3. It will return a struct specified as you wish.
+
+The only requirement is that the struct or map **MUST** contain a key
+called `key` that uniquely identifies this content. It **MUST** be a
 `String`.
 
-If you wish to use `makeup` styling, specify the needed dependencies
-in your `mix.exs` file. If I wanted to highlight Elixir, Erlang and
-HTML in my project, then I would specify the following:
+If you wish to use [makeup](https://github.com/elixir-makeup/makeup) to style your `code` blocks, you must
+specify the needed dependencies in your `mix.exs` file.
+
+For example, if you wanted to highlight Elixir, Erlang and HTML in your
+project, then I would specify the following:
 
 ```elixir
 defp deps do
@@ -96,14 +97,14 @@ defp deps do
 end
 ```
 
-Then I can use tags in my markdown code blocks like so:
+Then you can use tags in your markdown code blocks like so:
 
 ```markdown
-````elixir
+```elixir
 def start_link(arg) do
   GenServer.start_link(__MODULE__, arg, name: __MODULE__)
 end
-````
+```
 ```
 
 ## Differences from NimblePublisher
@@ -114,6 +115,7 @@ is different.
 * Metadata in markdown files is specified in JSON instead of Elixir
 * Designed to be updated at runtime via calling refresh methods (`PolyPost.build_and_store!/1` or `PolyPost.build_and_store_all!/0`)
 * Must be configured through `Application` config using `:poly_post`
+* Stores content in ETS instead of compiling directly into modules
 
 ## License
 
