@@ -1,6 +1,4 @@
 defmodule PolyPost do
-  @moduledoc since: "0.1.0"
-
   use Application
 
   alias PolyPost.{

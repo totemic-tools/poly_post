@@ -2,7 +2,6 @@ defmodule PolyPost.Resource do
   @moduledoc """
   A behavior used to transform a resource (like a markdown file) into structured content.
   """
-  @moduledoc since: "0.1.0"
 
   @type name :: atom()
   @type key :: term()
