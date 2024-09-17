@@ -1,4 +1,6 @@
 defmodule PolyPost do
+  @moduledoc since: "0.1.0"
+
   use Application
 
   alias PolyPost.{
@@ -27,6 +29,7 @@ defmodule PolyPost do
   Builds a list of content for a specific markdown + metadata resource
   and store it in a `Depot` process.
   """
+  @doc since: "0.1.0"
   @spec build_and_store!(Resource.name()) :: :ok
   def build_and_store!(resource) do
     resource
@@ -40,6 +43,7 @@ defmodule PolyPost do
   Builds all the content for each  markdown + metadata resource
   and store it in a corresponding `Depot` process.
   """
+  @doc since: "0.1.0"
   @spec build_and_store_all!() :: :ok
   def build_and_store_all! do
     Builder.build_all!()

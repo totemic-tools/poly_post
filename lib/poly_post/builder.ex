@@ -10,12 +10,14 @@ defmodule PolyPost.Builder do
   @doc """
   Builds a list of content for a specific marddown + metadata resource.
   """
+  @doc since: "0.1.0"
   @spec build!(Resource.name()) :: [Resource.content()]
   def build!(resource), do: build_content!(resource)
 
   @doc """
   Builds all the content for each resource.
   """
+  @doc since: "0.1.0"
   @spec build_all!() :: [{Resource.name(), [Resource.content()]}]
   def build_all! do
     get_config()
