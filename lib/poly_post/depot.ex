@@ -13,6 +13,7 @@ defmodule PolyPost.Depot do
   Starts the Depot process with a given name to represent the
   resource.
   """
+  @doc since: "0.1.0"
   @spec start_link(Resource.name()) :: GenServer.on_start()
   def start_link(name) do
     GenServer.start_link(__MODULE__, name, name: via(name))
@@ -21,6 +22,7 @@ defmodule PolyPost.Depot do
   @doc """
   Removes all the content related to the resouce.
   """
+  @doc since: "0.1.0"
   @spec clear(Resource.name()) :: :ok
   def clear(name) do
     GenServer.call(via(name), :clear)
@@ -29,6 +31,7 @@ defmodule PolyPost.Depot do
   @doc """
   Finds specific content by a key for the resource.
   """
+  @doc since: "0.1.0"
   @spec find(Resource.name(), Resource.key()) :: Resource.content()
   def find(name, key) do
     GenServer.call(via(name), {:find, key})
@@ -37,6 +40,7 @@ defmodule PolyPost.Depot do
   @doc """
   Gets all content for a resource.
   """
+  @doc since: "0.1.0"
   @spec get_all(Resource.name()) :: [{Resource.key(), Resource.content()}]
   def get_all(name) do
     GenServer.call(via(name), :get_all)
@@ -45,6 +49,7 @@ defmodule PolyPost.Depot do
   @doc """
   Inserts content for a resource via a key
   """
+  @doc since: "0.1.0"
   @spec insert(Resource.name(), Resource.key(), Resource.content()) :: :ok
   def insert(name, key, content) do
     GenServer.cast(via(name), {:insert, key, content})

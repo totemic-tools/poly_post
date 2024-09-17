@@ -3,17 +3,24 @@ defmodule PolyPost.Depots do
 
   alias PolyPost.Depot
 
+  @doc """
+  Starts the Depot supervisor
+  """
+  @doc since: "0.1.0"
+  @spec start_link() :: Supervisor.on_start()
   def start_link() do
     Supervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   # Callbacks
 
+  @doc since: "0.1.0"
   @impl true
   def init(_) do
     Supervisor.init(depots(), strategy: :one_for_one)
   end
 
+  @doc since: "0.1.0"
   def child_spec(_) do
     %{id: __MODULE__, start: {__MODULE__, :start_link, []}, type: :supervisor}
   end
