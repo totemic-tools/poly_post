@@ -28,13 +28,12 @@ defmodule PolyPost do
   and store it in a `Depot` process.
   """
   @doc since: "0.1.0"
-  @spec build_and_store!(Resource.name()) :: :ok
+  @spec build_and_store!(Resource.name()) :: :ok | {:error, :not_found}
   def build_and_store!(resource) do
-    resource
-    |> Builder.build!()
-    |> store_content(resource)
-
-    :ok
+    case Builder.build!(resource) do
+      [] -> {:error, :not_found}
+      content -> store_content(content, resource)
+    end
   end
 
   @doc """
@@ -48,8 +47,30 @@ defmodule PolyPost do
     |> Enum.each(fn {resource, content} ->
       store_content(content, resource)
     end)
+  end
 
-    :ok
+  @doc """
+  Clears all content for a specific resource
+  """
+  @doc since: "0.2.0"
+  @spec clear(Resource.name()) :: :ok | {:error, :not_found}
+  def clear(resource) do
+    if Depot.exists?(resource) do
+      Depot.clear(resource)
+    else
+      {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Clears all content out of all resources
+  """
+  @doc since: "0.2.0"
+  @spec clear_all() :: :ok
+  def clear_all do
+    Application.fetch_env!(:poly_post, :resources)
+    |> get_in([:content])
+    |> Enum.each(fn {resource, _} -> Depot.clear(resource) end)
   end
 
   # Private

@@ -30,7 +30,7 @@ defmodule PolyPost.Builder do
   defp build_content!(resource) do
     case get_config(resource) do
       {module, {:path, paths}} -> build_via_paths!(module, paths)
-      _ -> :ok
+      _ -> []
     end
   end
 

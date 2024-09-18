@@ -3,8 +3,13 @@ defmodule PolyPost.Resource do
   A behavior used to transform a resource (like a markdown file) into structured content.
   """
 
+  @typedoc "Name of an existing resource"
   @type name :: atom()
+
+  @typedoc "The unique ID for an item belonging to a resource"
   @type key :: term()
+
+  @typedoc "The content belonging to an item (includes `key`)"
   @type content :: %{key: key()}
 
   @doc """
