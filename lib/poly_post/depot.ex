@@ -29,6 +29,18 @@ defmodule PolyPost.Depot do
   end
 
   @doc """
+  Checks to see if a depot process for a resource exists.
+  """
+  @doc since: "0.2.0"
+  @spec exists?(Resource.name()) :: boolean()
+  def exists?(name) do
+    case Registry.lookup(PolyPost.Registry, name) do
+      [] -> false
+      _ -> true
+    end
+  end
+
+  @doc """
   Finds specific content by a key for the resource.
   """
   @doc since: "0.1.0"
