@@ -21,10 +21,7 @@ You can add `poly_post` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    # Required
     {:poly_post, "~> 0.1"}
-
-
     {:jason, "~> 1.4"} # For JSON front matter
     {:yaml_elixir, "~> 2.11"} # For YAML front matter
     {:toml, "~> 1.4"} # For TOML front matter
