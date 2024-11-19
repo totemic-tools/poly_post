@@ -6,7 +6,8 @@ A publishing engine with markdown and code highlighting support.
 
 * Loads files directly from configured paths
 * Stores content in single process-owned ETS tables
-* Supports markdown with structured metadata in JSON
+* Supports markdown
+* Supports structured metadata in an agnostic way (bring your own decoder)
 * Supports multiple directories with markdown files that can be specified as different resources
 * Supports code highlighting in `code` blocks using [makeup](https://github.com/elixir-makeup/makeup)
 * Update content during runtime by calling:
@@ -23,27 +24,40 @@ def deps do
 end
 ```
 
-In any of the `config/{config,dev,prod,test}.exs` files
-you can configure each resources for your content:
+In any of the `config/{config,dev,prod,test}.exs` files you can
+configure the front matter decoder and each resource for your content:
 
 ```elixir
 config :poly_post, :resources,
+  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
   content: [
-    articles: {Article, {:path, "/path/to/my/markdown/*.md")}}
+    articles: [
+      module: Article,
+      path: "/path/to/my/markdown/*.md"
+    ]
   ]
 ```
+
+This will use the [Jason](https://github.com/michalmuskala/jason)
+parser to parse the front matter as JSON. You can use any format that
+you want that confirms to the following API:
+
+1. The decoder must take two arguments
+2. The decoder must return the following tuples:
+  * `{:ok, content}`
+  * `{:error, error}`
 
 ## Basic Usage
 
 ### Loading and Storing Content
 
-With a file called `my_article1.md` in the configured directory:
+With a file called `my_article1.md` in the configured directory with
+YAML front matter:
 
 ```markdown
-{
-  "title": "My Article #1",
-  "author": "Me"
-}
+---
+title: "My Article #1",
+author: "Me"
 ---
 ## My Article 1
 
