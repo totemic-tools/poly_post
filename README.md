@@ -20,7 +20,15 @@ You can add `poly_post` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:poly_post, "~> 0.1"}]
+  [
+    # Required
+    {:poly_post, "~> 0.1"}
+
+
+    {:jason, "~> 1.4"} # For JSON front matter
+    {:yaml_elixir, "~> 2.11"} # For YAML front matter
+    {:toml, "~> 1.4"} # For TOML front matter
+  ]
 end
 ```
 
@@ -38,7 +46,7 @@ config :poly_post, :resources,
   ]
 ```
 
-This will use the [Jason](https://github.com/michalmuskala/jason)
+This example will use the [Jason](https://github.com/michalmuskala/jason)
 parser to parse the front matter as JSON. You can use any format that
 you want that confirms to the following API:
 
@@ -50,7 +58,7 @@ you want that confirms to the following API:
 {:error, error}
 ```
 
-3.
+3. Y
 
 ## Basic Usage
 
@@ -68,6 +76,10 @@ author: "Me"
 
 This is my first article
 ```
+
+>
+> You MUST make sure that the front matter begins and ends with a "---"
+>
 
 You can create an `Article` module to load your content by
 implementing the `PolyPost.Resource.build/3` callback:
