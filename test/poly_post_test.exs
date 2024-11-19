@@ -9,8 +9,12 @@ defmodule PolyPostTest do
   @articles_path "test/fixtures/test_articles/*.md"
 
   @resources [
+    front_matter: [decoder: {Jason, :decode, keys: :atoms}],
     content: [
-      test_articles: {TestArticle, {:path, File.cwd!() |> Path.join(@articles_path)}}
+      test_articles: [
+        module: TestArticle,
+        path: File.cwd!() |> Path.join(@articles_path)
+      ]
     ]
   ]
 

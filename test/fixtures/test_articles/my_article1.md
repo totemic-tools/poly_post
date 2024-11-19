@@ -1,3 +1,4 @@
+---
 {
   "title": "My Article #1",
   "author": "Me"

@@ -1,4 +1,4 @@
-defmodule TestArticle do
+defmodule TestGuide do
   @behaviour PolyPost.Resource
 
   @enforce_keys [:key, :title, :author, :body]

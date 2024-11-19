@@ -5,14 +5,29 @@ defmodule PolyPost.BuilderTest do
 
   @articles_path "test/fixtures/test_articles/*.md"
   @stories_path "test/fixtures/test_stories/*.md"
+  @guides_path "test/fixtures/test_guides/*.md"
 
   @article_resource :test_articles
   @story_resource :test_stories
+  @guide_resource :test_guides
 
   @resources [
+    front_matter: [decoder: {Jason, :decode, keys: :atoms}],
     content: [
-      test_articles: {TestArticle, {:path, File.cwd!() |> Path.join(@articles_path)}},
-      test_stories: {TestStory, {:path, File.cwd!() |> Path.join(@stories_path)}}
+      test_articles: [
+        module: TestArticle,
+        path: File.cwd!() |> Path.join(@articles_path)
+      ],
+      test_stories: [
+        module: TestStory,
+        path: File.cwd!() |> Path.join(@stories_path),
+        front_matter: [decoder: {YamlElixir, :read_from_string, atoms: true}]
+      ],
+      test_guides: [
+        module: TestGuide,
+        path: File.cwd!() |> Path.join(@guides_path),
+        front_matter: [decoder: {Toml, :decode, keys: :atoms}]
+      ],
     ]
   ]
 
@@ -71,7 +86,16 @@ defmodule PolyPost.BuilderTest do
                     author: "Me",
                     body: "<h2>\nMy Story 1</h2>\n<p>\nThis is my first story</p>\n"
                   }
-                ]}
+                ]},
+               {@guide_resource,
+                [
+                  %TestGuide{
+                    key: "my_guide1.md",
+                    title: "My Guide #1",
+                    author: "Me",
+                    body: "<h2>\nMy Guide 1</h2>\n<p>\nThis is my first guide</p>\n"
+                  }
+                ]},
              ] = Builder.build_all!()
     end
   end
