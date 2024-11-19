@@ -52,13 +52,11 @@ you want that confirms to the following API:
 
 1. The decoder must take two arguments
 2. The decoder must return the following tuples:
-
 ```elixir
 {:ok, content}
 {:error, error}
 ```
-
-3. Y
+3. The front matter begins and ends with a "---"
 
 ## Basic Usage
 
@@ -76,10 +74,6 @@ author: "Me"
 
 This is my first article
 ```
-
->
-> You MUST make sure that the front matter begins and ends with a "---"
->
 
 You can create an `Article` module to load your content by
 implementing the `PolyPost.Resource.build/3` callback:
