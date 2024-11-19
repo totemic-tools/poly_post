@@ -4,12 +4,12 @@ A publishing engine with markdown and code highlighting support.
 
 ## Features
 
-* Loads files directly from configured paths
-* Stores content in single process-owned ETS tables
 * Supports markdown
 * Supports structured metadata in an agnostic way (bring your own decoder)
 * Supports multiple directories with markdown files that can be specified as different resources
 * Supports code highlighting in `code` blocks using [makeup](https://github.com/elixir-makeup/makeup)
+* Loads files directly from configured paths
+* Stores content in single process-owned ETS tables
 * Update content during runtime by calling:
   * `PolyPost.build_and_store!/1`
   * `PolyPost.build_and_store_all!/0`
@@ -53,7 +53,21 @@ you want that confirms to the following API:
 {:ok, content}
 {:error, error}
 ```
-3. The front matter begins and ends with a "---"
+3. The front matter begins and ends with a `---`
+
+You can also specify different formats at the individual content level:
+
+```elixir
+config :poly_post, :resources,
+  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
+  content: [
+    articles: [
+      module: Article,
+      path: "/path/to/my/markdown/*.md",
+      front_matter: [decoder: {Toml, :decode, keys: :atoms}]
+    ]
+  ]
+```
 
 ## Basic Usage
 
