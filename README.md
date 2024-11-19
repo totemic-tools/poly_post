@@ -178,7 +178,7 @@ PolyPost.Depot.get_all(:articles)
 This library was heavily inspired by [NimblePublisher](https://github.com/dashbitco/nimble_publisher), but
 it **IS** different.
 
-* Metadata in markdown files are specified in JSON instead of Elixir
+* Metadata in markdown files are specified in an agnostic way instead of just Elixir
 * Designed to be updated at runtime via calling refresh methods (`PolyPost.build_and_store!/1` or `PolyPost.build_and_store_all!/0`)
 * Must be configured through `Application` config using `:poly_post`
 * Stores content in ETS instead of compiling directly into modules
