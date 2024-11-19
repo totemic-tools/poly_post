@@ -44,8 +44,13 @@ you want that confirms to the following API:
 
 1. The decoder must take two arguments
 2. The decoder must return the following tuples:
-  * `{:ok, content}`
-  * `{:error, error}`
+
+```elixir
+{:ok, content}
+{:error, error}
+```
+
+3.
 
 ## Basic Usage
 
