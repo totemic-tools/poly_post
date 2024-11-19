@@ -4,11 +4,12 @@ A publishing engine with markdown and code highlighting support.
 
 ## Features
 
-* Loads files directly from configured paths
-* Stores content in single process-owned ETS tables
-* Supports markdown with structured metadata in JSON
+* Supports markdown
+* Supports structured metadata in an agnostic way (bring your own decoder)
 * Supports multiple directories with markdown files that can be specified as different resources
 * Supports code highlighting in `code` blocks using [makeup](https://github.com/elixir-makeup/makeup)
+* Loads files directly from configured paths
+* Stores content in single process-owned ETS tables
 * Update content during runtime by calling:
   * `PolyPost.build_and_store!/1`
   * `PolyPost.build_and_store_all!/0`
@@ -19,17 +20,52 @@ You can add `poly_post` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:poly_post, "~> 0.1"}]
+  [
+    {:poly_post, "~> 0.1"}
+    {:jason, "~> 1.4"} # For JSON front matter
+    {:yaml_elixir, "~> 2.11"} # For YAML front matter
+    {:toml, "~> 1.4"} # For TOML front matter
+  ]
 end
 ```
 
-In any of the `config/{config,dev,prod,test}.exs` files
-you can configure each resources for your content:
+In any of the `config/{config,dev,prod,test}.exs` files you can
+configure the front matter decoder and each resource for your content:
 
 ```elixir
 config :poly_post, :resources,
+  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
   content: [
-    articles: {Article, {:path, "/path/to/my/markdown/*.md")}}
+    articles: [
+      module: Article,
+      path: "/path/to/my/markdown/*.md"
+    ]
+  ]
+```
+
+This example will use the [Jason](https://github.com/michalmuskala/jason)
+parser to parse the front matter as JSON. You can use any format that
+you want that confirms to the following API:
+
+1. The decoder must take two arguments
+2. The decoder must return the following tuples:
+```elixir
+{:ok, content}
+{:error, error}
+```
+3. The front matter begins and ends with a `---`
+
+You can also specify different formats at the individual content level:
+
+```elixir
+config :poly_post, :resources,
+  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
+  content: [
+    articles: [
+      module: Article,
+      path: "/path/to/my/markdown/*.md",
+      front_matter: [decoder: {Toml, :decode, keys: :atoms}]
+    ]
   ]
 ```
 
@@ -37,13 +73,13 @@ config :poly_post, :resources,
 
 ### Loading and Storing Content
 
-With a file called `my_article1.md` in the configured directory:
+With a file called `my_article1.md` in the configured directory with
+YAML front matter:
 
 ```markdown
-{
-  "title": "My Article #1",
-  "author": "Me"
-}
+---
+title: "My Article #1",
+author: "Me"
 ---
 ## My Article 1
 

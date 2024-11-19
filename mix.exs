@@ -31,11 +31,15 @@ defmodule PolyPost.MixProject do
     [
       # All
       {:earmark, "~> 1.4"},
-      {:jason, "~> 1.4"},
       {:makeup, "~> 1.1"},
 
       # Dev
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+
+      # Dev + Test
+      {:jason, "~> 1.4", only: [:dev, :test]},
+      {:toml, "~> 0.7", only: [:dev, :test]},
+      {:yaml_elixir, "~> 2.1", only: [:dev, :test]}
     ]
   end
 

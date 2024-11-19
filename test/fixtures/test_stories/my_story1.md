@@ -1,7 +1,6 @@
-{
-  "title": "My Story #1",
-  "author": "Me"
-}
+---
+title: "My Story #1"
+author: "Me"
 ---
 ## My Story 1
 
