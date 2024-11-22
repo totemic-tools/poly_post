@@ -21,7 +21,9 @@ defmodule PolyPost.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.cobertura": :test
+        "coveralls.cobertura": :test,
+        "mneme.test": :test,
+        "mneme.watch": :test
       ],
       source_url: @source_url,
       homepage_url: @source_url
@@ -51,6 +53,7 @@ defmodule PolyPost.MixProject do
       {:yaml_elixir, "~> 2.1", only: [:dev, :test]},
 
       # Test
+      {:mneme, "~> 0.10", only: :test},
       {:excoveralls, "~> 0.18", only: :test}
     ]
   end
