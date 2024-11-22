@@ -4,11 +4,13 @@ defmodule PolyPost.BuilderTest do
 
   alias PolyPost.Builder
 
+  @bad_path "test/fixtures/test_bad/*.md"
   @articles_path "test/fixtures/test_articles/*.md"
   @stories_path "test/fixtures/test_stories/*.md"
   @guides_path "test/fixtures/test_guides/*.md"
 
   @article_resource :test_articles
+  @bad_resource :test_bad
 
   @resources [
     front_matter: [decoder: {Jason, :decode, keys: :atoms}],
@@ -30,11 +32,31 @@ defmodule PolyPost.BuilderTest do
     ]
   ]
 
+  @bad_resources [
+    front_matter: [decoder: {YamlElixir, :read_from_string, []}],
+    content: [
+      test_bad: [
+        module: TestBad,
+        path: File.cwd!() |> Path.join(@bad_path)
+      ]
+    ]
+  ]
+
   setup_all do
     Application.put_env(:poly_post, :resources, @resources)
   end
 
   describe ".build!/1" do
+    test "it fails to build a specific resource because of bad metadata" do
+      Application.put_env(:poly_post, :resources, @bad_resources)
+
+      assert_raise PolyPost.ParsingMetadataError, fn ->
+        Builder.build!(@bad_resource)
+      end
+
+      Application.put_env(:poly_post, :resources, @resources)
+    end
+
     test "it builds a specific resource" do
       auto_assert [
                     %TestArticle{
