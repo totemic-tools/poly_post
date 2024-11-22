@@ -41,7 +41,7 @@ defmodule PolyPost.MixProject do
     [
       # All
       {:earmark, "~> 1.4"},
-      {:makeup, "~> 1.1"},
+      {:makeup, "~> 1.2"},
 
       # Dev
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
@@ -49,6 +49,7 @@ defmodule PolyPost.MixProject do
       # Dev + Test
       {:castore, "~> 1.0", only: [:dev, :test]},
       {:jason, "~> 1.4", only: [:dev, :test]},
+      {:makeup_elixir, "~> 1.0", only: [:dev, :test]},
       {:toml, "~> 0.7", only: [:dev, :test]},
       {:yaml_elixir, "~> 2.1", only: [:dev, :test]},
 

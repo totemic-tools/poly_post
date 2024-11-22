@@ -5,12 +5,14 @@ defmodule PolyPost.BuilderTest do
   alias PolyPost.Builder
 
   @bad_path "test/fixtures/test_bad/*.md"
+  @missing_path "test/fixtures/test_missing/*.md"
   @articles_path "test/fixtures/test_articles/*.md"
   @stories_path "test/fixtures/test_stories/*.md"
   @guides_path "test/fixtures/test_guides/*.md"
 
   @article_resource :test_articles
   @bad_resource :test_bad
+  @missing_resource :test_missing
 
   @resources [
     front_matter: [decoder: {Jason, :decode, keys: :atoms}],
@@ -42,7 +44,23 @@ defmodule PolyPost.BuilderTest do
     ]
   ]
 
+  @missing_resources [
+    front_matter: [decoder: {YamlElixir, :read_from_string, []}],
+    content: [
+      test_missing: [
+        module: TestMissing,
+        path: File.cwd!() |> Path.join(@missing_path)
+      ]
+    ]
+  ]
+
   setup_all do
+    Makeup.Registry.register_lexer(Makeup.Lexers.ElixirLexer,
+      options: [group_prefix: "group"],
+      names: ["elixir", "iex"],
+      extensions: ["ex", "exs"]
+    )
+
     Application.put_env(:poly_post, :resources, @resources)
   end
 
@@ -57,18 +75,38 @@ defmodule PolyPost.BuilderTest do
       Application.put_env(:poly_post, :resources, @resources)
     end
 
+    test "it fails to build a specific resource because of missing metadata" do
+      Application.put_env(:poly_post, :resources, @missing_resources)
+
+      assert_raise PolyPost.MissingMetadataError, fn ->
+        Builder.build!(@missing_resource)
+      end
+
+      Application.put_env(:poly_post, :resources, @resources)
+    end
+
     test "it builds a specific resource" do
       auto_assert [
                     %TestArticle{
                       author: "Me",
-                      body:
-                        "<h2>\nMy Article 2</h2>\n<p>\nThis is my second article</p>\n<pre><code class=\"elixir\">Enum.map([1, 2, 3], fn x -> x + 1 end)</code></pre>\n",
+                      body: """
+                      <h2>
+                      My Article 2</h2>
+                      <p>
+                      This is my second article</p>
+                      <pre><code class="highlight"><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="group-1">(</span><span class="p" data-group-id="group-2">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="group-2">]</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="group-3">fn</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k" data-group-id="group-3">end</span><span class="p" data-group-id="group-1">)</span></code></pre>
+                      """,
                       key: "my_article2.md",
                       title: "My Article #2"
                     },
                     %TestArticle{
                       author: "Me",
-                      body: "<h2>\nMy Article 1</h2>\n<p>\nThis is my first article</p>\n",
+                      body: """
+                      <h2>
+                      My Article 1</h2>
+                      <p>
+                      This is my first article</p>
+                      """,
                       key: "my_article1.md",
                       title: "My Article #1"
                     }
@@ -83,7 +121,7 @@ defmodule PolyPost.BuilderTest do
                       %TestArticle{
                         author: "Me",
                         body:
-                          "<h2>\nMy Article 2</h2>\n<p>\nThis is my second article</p>\n<pre><code class=\"elixir\">Enum.map([1, 2, 3], fn x -> x + 1 end)</code></pre>\n",
+                          "<h2>\nMy Article 2</h2>\n<p>\nThis is my second article</p>\n<pre><code class=\"highlight\"><span class=\"nc\">Enum</span><span class=\"o\">.</span><span class=\"n\">map</span><span class=\"p\" data-group-id=\"group-1\">(</span><span class=\"p\" data-group-id=\"group-2\">[</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">3</span><span class=\"p\" data-group-id=\"group-2\">]</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"k\" data-group-id=\"group-3\">fn</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">-&gt;</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"k\" data-group-id=\"group-3\">end</span><span class=\"p\" data-group-id=\"group-1\">)</span></code></pre>\n",
                         key: "my_article2.md",
                         title: "My Article #2"
                       },
@@ -111,7 +149,8 @@ defmodule PolyPost.BuilderTest do
                     test_guides: [
                       %TestGuide{
                         author: "Me",
-                        body: "<h2>\nMy Guide 1</h2>\n<p>\nThis is my first guide</p>\n",
+                        body:
+                          "<h2>\nMy Guide 1</h2>\n<p>\nThis is my first guide</p>\n<pre><code class=\"ruby\">a = Klass.new\na.run!</code></pre>\n",
                         key: "my_guide1.md",
                         title: "My Guide #1"
                       }
