@@ -34,7 +34,7 @@ configure the front matter decoder and each resource for your content:
 
 ```elixir
 config :poly_post, :resources,
-  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
+  front_matter: [decoder: {Jason, :decode, keys: :atoms}],
   content: [
     articles: [
       module: Article,
@@ -59,7 +59,7 @@ You can also specify different formats at the individual content level:
 
 ```elixir
 config :poly_post, :resources,
-  front_matter: {:decoder: {Jason, :decode, keys: :atoms}},
+  front_matter: [decoder: {Jason, :decode, keys: :atoms}],
   content: [
     articles: [
       module: Article,
