@@ -16,15 +16,16 @@ A publishing engine with markdown and code highlighting support.
 
 ## Installation
 
-You can add `poly_post` to your list of dependencies in `mix.exs`:
+Add `poly_post` to your list of dependencies in `mix.exs` and include
+any decoders you want to use:
 
 ```elixir
 def deps do
   [
-    {:poly_post, "~> 0.1"}
-    {:jason, "~> 1.4"} # For JSON front matter
-    {:yaml_elixir, "~> 2.11"} # For YAML front matter
-    {:toml, "~> 1.4"} # For TOML front matter
+    {:poly_post, "~> 0.1"},
+    {:jason, "~> 1.4"}, # Optional dependency for JSON front matter
+    {:yaml_elixir, "~> 2.11"}, # Optional dependency for YAML front matter
+    {:toml, "~> 1.4"} # Optoinal dependency for TOML front matter
   ]
 end
 ```
