@@ -30,6 +30,10 @@ def deps do
 end
 ```
 
+Then run `mix deps.get` and `mix deps.compile` or just a `mix compile` in your app.
+
+## Configuration
+
 In any of the `config/{config,dev,prod,test}.exs` files you can
 configure the front matter decoder and each resource for your content:
 
