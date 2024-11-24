@@ -45,7 +45,7 @@ defmodule PolyPost.Builder do
     fm_config = get_in(opts, [:front_matter]) || get_front_matter_config()
 
     cond do
-      dest && paths && not (git || github) ->
+      paths && !(git || github) ->
         build_via_paths!(module, fm_config, paths)
       dest && paths && (git || github) ->
         build_via_git!(module, fm_config, paths, dest, git, github, ref)
