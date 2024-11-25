@@ -8,7 +8,7 @@ defmodule PolyPost.Scm.Git do
   end
 
   def checkout!(path, reference) do
-    File.cd!(path, fn -> run!(["checkout", reference]) end)
+    File.cd!(path, fn -> run!(["checkout", reference, "--quiet"]) end)
   end
 
   def clone!(repo, path) do
