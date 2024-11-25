@@ -14,6 +14,13 @@ A publishing engine with markdown and code highlighting support.
   * `PolyPost.build_and_store!/1`
   * `PolyPost.build_and_store_all!/0`
 
+## Requirements
+
+* Elixir 1.17 or greater
+* Erlang OTP 27 or greater
+* Git
+* A mostly POSIX compatible environment (linux, darwin, bsd, etc.)
+
 ## Installation
 
 Add `poly_post` to your list of dependencies in `mix.exs` and include

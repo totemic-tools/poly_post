@@ -16,7 +16,9 @@ defmodule PolyPost.Scm.Git do
   end
 
   def get_default_branch!(path) do
-    File.cd!(path, fn -> run!(["rev-parse", "--abbrev-ref", "origin/HEAD"]) end)
+    path
+    |> File.cd!(fn -> run!(["rev-parse", "--abbrev-ref", "HEAD"]) end)
+    |> String.trim()
   end
 
   def get_status!(path) do
@@ -28,7 +30,10 @@ defmodule PolyPost.Scm.Git do
   end
 
   def stash!(path) do
-    File.cd!(path, fn -> run!(["stash"]) end)
+    File.cd!(path, fn ->
+      add!(path, ".")
+      run!(["stash"])
+    end)
   end
 
   # Private
@@ -42,8 +47,9 @@ defmodule PolyPost.Scm.Git do
     else
       {response, 0} ->
         response
-      {response, _} when is_binary(response) ->
-        raise "The git command failed with reason: #{response}"
+      {response, status} when is_binary(response) ->
+        reason = String.trim(response <> " " <> inspect(status))
+        raise "The git command failed with reason: #{reason}"
       _ ->
         raise "The git command failed with args: #{Enum.join(args, " ")}"
     end
