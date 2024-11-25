@@ -56,10 +56,10 @@ defmodule PolyPost.Builder do
 
   defp build_via_git!(module, fm_config, paths, dest, git, github, ref) do
     repo = git || Github.expand_repo(github)
+    git_dir = Path.join(dest, ".git")
 
-    if File.dir?(dest) do
+    if File.dir?(dest) && File.dir?(git_dir) do
       if Git.get_status!(dest) != "" do
-        Git.add!(dest, ".")
         Git.stash!(dest)
       end
     else
