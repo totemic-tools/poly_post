@@ -14,20 +14,32 @@ A publishing engine with markdown and code highlighting support.
   * `PolyPost.build_and_store!/1`
   * `PolyPost.build_and_store_all!/0`
 
+## Requirements
+
+* Elixir 1.17 or greater
+* Erlang OTP 27 or greater
+* Git
+* A mostly POSIX compatible environment (linux, darwin, bsd, etc.)
+
 ## Installation
 
-You can add `poly_post` to your list of dependencies in `mix.exs`:
+Add `poly_post` to your list of dependencies in `mix.exs` and include
+any decoders you want to use:
 
 ```elixir
 def deps do
   [
-    {:poly_post, "~> 0.1"}
-    {:jason, "~> 1.4"} # For JSON front matter
-    {:yaml_elixir, "~> 2.11"} # For YAML front matter
-    {:toml, "~> 1.4"} # For TOML front matter
+    {:poly_post, "~> 0.1"},
+    {:jason, "~> 1.4"}, # Optional dependency for JSON front matter
+    {:yaml_elixir, "~> 2.11"}, # Optional dependency for YAML front matter
+    {:toml, "~> 1.4"} # Optoinal dependency for TOML front matter
   ]
 end
 ```
+
+Then run `mix deps.get` and `mix deps.compile` or just a `mix compile` in your app.
+
+## Configuration
 
 In any of the `config/{config,dev,prod,test}.exs` files you can
 configure the front matter decoder and each resource for your content:

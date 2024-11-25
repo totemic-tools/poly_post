@@ -2,6 +2,7 @@ defmodule PolyPost.BuilderTest do
   use ExUnit.Case, async: false
   use Mneme
 
+  alias PolyPost.GitTestHelper
   alias PolyPost.Builder
 
   @bad_path "test/fixtures/test_bad/*.md"
@@ -13,6 +14,7 @@ defmodule PolyPost.BuilderTest do
   @article_resource :test_articles
   @bad_resource :test_bad
   @missing_resource :test_missing
+  @repo_resource :test_repo
 
   @resources [
     front_matter: [decoder: {Jason, :decode, keys: :atoms}],
@@ -86,76 +88,110 @@ defmodule PolyPost.BuilderTest do
     end
 
     test "it builds a specific resource" do
+      article_body_1 = File.read!("test/fixtures/test_articles/my_article1.html")
+      article_body_2 = File.read!("test/fixtures/test_articles/my_article2.html")
+
+      assert [
+        %TestArticle{
+          author: "Me",
+          body: ^article_body_2,
+          key: "my_article2.md",
+          title: "My Article #2"
+        },
+        %TestArticle{
+          author: "Me",
+          body: ^article_body_1,
+          key: "my_article1.md",
+          title: "My Article #1"
+        }
+      ] = Builder.build!(@article_resource)
+    end
+
+    test "it builds a specific resource from git" do
+      git_resources = build_repo_resources()
+
+      Application.put_env(:poly_post, :resources, git_resources)
+
       auto_assert [
-                    %TestArticle{
-                      author: "Me",
-                      body: """
-                      <h2>
-                      My Article 2</h2>
-                      <p>
-                      This is my second article</p>
-                      <pre><code class="highlight"><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="group-1">(</span><span class="p" data-group-id="group-2">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="group-2">]</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="group-3">fn</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k" data-group-id="group-3">end</span><span class="p" data-group-id="group-1">)</span></code></pre>
-                      """,
-                      key: "my_article2.md",
-                      title: "My Article #2"
-                    },
-                    %TestArticle{
-                      author: "Me",
-                      body: """
-                      <h2>
-                      My Article 1</h2>
-                      <p>
-                      This is my first article</p>
-                      """,
-                      key: "my_article1.md",
-                      title: "My Article #1"
-                    }
-                  ] <- Builder.build!(@article_resource)
+        %TestArticle{
+          body: "<p>\nThis is test content.</p>\n",
+          key: "git_test_content.md"
+        }
+      ] <- Builder.build!(@repo_resource)
+
+      Application.put_env(:poly_post, :resources, @resources)
     end
   end
 
   describe ".build_all!/0" do
     test "it builds all the resources" do
-      auto_assert [
-                    test_articles: [
-                      %TestArticle{
-                        author: "Me",
-                        body:
-                          "<h2>\nMy Article 2</h2>\n<p>\nThis is my second article</p>\n<pre><code class=\"highlight\"><span class=\"nc\">Enum</span><span class=\"o\">.</span><span class=\"n\">map</span><span class=\"p\" data-group-id=\"group-1\">(</span><span class=\"p\" data-group-id=\"group-2\">[</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">3</span><span class=\"p\" data-group-id=\"group-2\">]</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"k\" data-group-id=\"group-3\">fn</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">-&gt;</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"k\" data-group-id=\"group-3\">end</span><span class=\"p\" data-group-id=\"group-1\">)</span></code></pre>\n",
-                        key: "my_article2.md",
-                        title: "My Article #2"
-                      },
-                      %TestArticle{
-                        author: "Me",
-                        body: "<h2>\nMy Article 1</h2>\n<p>\nThis is my first article</p>\n",
-                        key: "my_article1.md",
-                        title: "My Article #1"
-                      }
-                    ],
-                    test_stories: [
-                      %TestStory{
-                        author: "Me",
-                        body: "<h2>\nMy Story 2</h2>\n<p>\nThis is my second story</p>\n",
-                        key: "my_story2.md",
-                        title: "My Story #2"
-                      },
-                      %TestStory{
-                        author: "Me",
-                        body: "<h2>\nMy Story 1</h2>\n<p>\nThis is my first story</p>\n",
-                        key: "my_story1.md",
-                        title: "My Story #1"
-                      }
-                    ],
-                    test_guides: [
-                      %TestGuide{
-                        author: "Me",
-                        body:
-                          "<h2>\nMy Guide 1</h2>\n<p>\nThis is my first guide</p>\n<pre><code class=\"ruby\">a = Klass.new\na.run!</code></pre>\n",
-                        key: "my_guide1.md",
-                        title: "My Guide #1"
-                      }
-                    ]
-                  ] <- Builder.build_all!()
+      article_body_1 = File.read!("test/fixtures/test_articles/my_article1.html")
+      article_body_2 = File.read!("test/fixtures/test_articles/my_article2.html")
+
+      assert [
+        test_articles: [
+          %TestArticle{
+            author: "Me",
+            body: ^article_body_2,
+            key: "my_article2.md",
+            title: "My Article #2"
+          },
+          %TestArticle{
+            author: "Me",
+            body: ^article_body_1,
+            key: "my_article1.md",
+            title: "My Article #1"
+          }
+        ],
+        test_stories: [
+          %TestStory{
+            author: "Me",
+            body: "<h2>\nMy Story 2</h2>\n<p>\nThis is my second story</p>\n",
+            key: "my_story2.md",
+            title: "My Story #2"
+          },
+          %TestStory{
+            author: "Me",
+            body: "<h2>\nMy Story 1</h2>\n<p>\nThis is my first story</p>\n",
+            key: "my_story1.md",
+            title: "My Story #1"
+          }
+        ],
+        test_guides: [
+          %TestGuide{
+            author: "Me",
+            body:
+            "<h2>\nMy Guide 1</h2>\n<p>\nThis is my first guide</p>\n<pre><code class=\"ruby\">a = Klass.new\na.run!</code></pre>\n",
+            key: "my_guide1.md",
+            title: "My Guide #1"
+          }
+        ]
+      ] = Builder.build_all!()
     end
+  end
+
+  # Private
+
+  defp build_repo_resources do
+    dest = GitTestHelper.random_tmp_dir()
+    path = GitTestHelper.setup_tmp_repo()
+    content = Path.join(path, "*.md")
+
+    GitTestHelper.make_test_commit(path)
+
+    [
+      front_matter: [decoder: {YamlElixir, :read_from_string, []}],
+      content: [
+        test_repo: [
+          module: TestArticle,
+          source: [
+            dest: dest,
+            git: path,
+            ref: "main"
+          ],
+          path: content
+        ]
+      ]
+    ]
   end
 end

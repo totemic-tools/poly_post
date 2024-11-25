@@ -1,9 +1,16 @@
 defmodule PolyPost.Builder do
   @moduledoc """
   A module used for building content from Markdown files (resources).
+
+  When configured to use git or github, this will also retrieve
+  content from the specified forge.
   """
 
   alias PolyPost.Resource
+  alias PolyPost.Scm.{
+    Git,
+    Github
+  }
 
   # API
 
@@ -29,20 +36,41 @@ defmodule PolyPost.Builder do
 
   defp build_content!(resources) do
     opts = get_resources_config(resources)
-    module = Keyword.get(opts, :module)
-    filepaths = Keyword.get(opts, :path)
-    fm_config = Keyword.get(opts, :front_matter) || get_front_matter_config()
+    module = get_in(opts, [:module])
+    paths = get_in(opts, [:path])
+    dest = get_in(opts, [:source, :dest])
+    git = get_in(opts, [:source, :git])
+    github = get_in(opts, [:source, :github])
+    ref = get_in(opts, [:source, :ref])
+    fm_config = get_in(opts, [:front_matter]) || get_front_matter_config()
 
     cond do
-      filepaths -> build_via_paths!(module, fm_config, filepaths)
-      :else -> []
+      paths && !(git || github) ->
+        build_via_paths!(module, fm_config, paths)
+      dest && paths && (git || github) ->
+        build_via_git!(module, fm_config, paths, dest, git, github, ref)
+      :else ->
+        []
     end
   end
 
-  defp build_via_filepath!(module, fm_config, filepath) do
-    filename = Path.basename(filepath)
-    {metadata, body} = extract_content!(filepath, fm_config)
-    apply(module, :build, [filename, metadata, body])
+  defp build_via_git!(module, fm_config, paths, dest, git, github, ref) do
+    repo = git || Github.expand_repo(github)
+    git_dir = Path.join(dest, ".git")
+
+    if File.dir?(dest) && File.dir?(git_dir) do
+      if Git.get_status!(dest) != "" do
+        Git.stash!(dest)
+      end
+    else
+      File.mkdir_p!(dest)
+      Git.clone!(repo, dest)
+    end
+
+    Git.checkout!(dest, ref || Git.get_default_branch!(dest))
+    Git.pull!(dest)
+
+    build_via_paths!(module, fm_config, paths)
   end
 
   defp build_via_paths!(module, fm_config, paths, content \\ [])
@@ -56,10 +84,16 @@ defmodule PolyPost.Builder do
       path
       |> Path.wildcard()
       |> Enum.reduce(content, fn filepath, acc ->
-        [build_via_filepath!(module, fm_config, filepath) | acc]
+        [build_via_specific_path!(module, fm_config, filepath) | acc]
       end)
 
     build_via_paths!(module, fm_config, paths, new_content)
+  end
+
+  defp build_via_specific_path!(module, fm_config, filepath) do
+    filename = Path.basename(filepath)
+    {metadata, body} = extract_content!(filepath, fm_config)
+    apply(module, :build, [filename, metadata, body])
   end
 
   defp extract_content!(path, fm_config) do

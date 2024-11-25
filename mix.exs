@@ -76,7 +76,7 @@ defmodule PolyPost.MixProject do
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/fixtures"]
+  defp elixirc_paths(:test), do: ["lib", "test/fixtures", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp package do
