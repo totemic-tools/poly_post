@@ -41,8 +41,18 @@ Then run `mix deps.get` and `mix deps.compile` or just a `mix compile` in your a
 
 ## Configuration
 
-In any of the `config/{config,dev,prod,test}.exs` files you can
-configure the front matter decoder and each resource for your content:
+There are two strategies for configuring content: `paths` and `git`.
+
+### For paths
+
+With the following environment variable, you can set your glob pattern:
+
+```
+export ARTICLE_PATH=/path/to/my/markdown/*.md
+```
+
+In the `config/runtime.exs` files you can configure the front matter
+decoder and each resource for your content:
 
 ```elixir
 config :poly_post, :resources,
@@ -50,7 +60,7 @@ config :poly_post, :resources,
   content: [
     articles: [
       module: Article,
-      path: "/path/to/my/markdown/*.md"
+      path: System.get_env("ARTICLE_PATH")
     ]
   ]
 ```
@@ -75,11 +85,48 @@ config :poly_post, :resources,
   content: [
     articles: [
       module: Article,
-      path: "/path/to/my/markdown/*.md",
+      path: System.get_env("ARTICLE_PATH"),
       front_matter: [decoder: {Toml, :decode, keys: :atoms}]
     ]
   ]
 ```
+
+### For git
+
+Your environment **MUST** have `git` installed for this to work.
+
+This is similar to the paths strategy, but you need to specify a
+`source` key as well:
+
+```elixir
+config :poly_post, :resources,
+  front_matter: [decoder: {YamlElixir, :read_from_string, []}],
+  content: [
+    articles: [
+      module: Article,
+      source: [
+        dest: System.get_env("SOURCE_PATH"),
+        github: "my-username/my-content",
+        ref: "main"
+      ],
+      path: System.get_env("CONTENT_PATH")
+    ]
+  ]
+```
+
+
+* `dest` - (required)is the folder that git will clone to.
+* `github` - (required if not using `git` config) to access a github repo, expands to `https://github.com/my-username/my-content.git`
+* `git` - (required if not using `github` config) to access a git repo, e.g `https://git.mydomain.com/repo.git` or can be local
+* `ref` - (optional) - the specified branch to use, defaults to whatever the default branch on the repo, usually `main` or `master`
+
+This implementation doesn't manage authentication if you are
+accessing a private repo, you must ensure the user that runs your
+application has read access to your git repo.
+
+If this is a security concern for you, it is recommended that you use
+the `path` strategy and use some other mechanism to retrieve the
+contents into your environment.
 
 ## Basic Usage
 
