@@ -24,6 +24,11 @@ jobs:
         elixir-version: '1.17.3'
         otp-version: '27.1'
 
+    - name: Setup test git identity
+      run: |
+        git config user.email "github-ci@totemic.dev"
+        git config user.name "Github CI"
+
     - name: Restore dependencies cache
       uses: actions/cache@v3
       with:
