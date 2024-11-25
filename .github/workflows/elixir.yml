@@ -26,8 +26,8 @@ jobs:
 
     - name: Setup test git identity
       run: |
-        git config user.email "github-ci@totemic.dev"
-        git config user.name "Github CI"
+        git config --global user.email "github-ci@totemic.dev"
+        git config --global user.name "Github CI"
 
     - name: Restore dependencies cache
       uses: actions/cache@v3
