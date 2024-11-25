@@ -57,9 +57,11 @@ defmodule PolyPost.Builder do
   defp build_via_git!(module, fm_config, paths, dest, git, github, ref) do
     repo = git || Github.expand_repo(github)
 
-    if File.dir?(dest) and Git.get_status!(dest) != "" do
-      Git.add!(dest, ".")
-      Git.stash!(dest)
+    if File.dir?(dest) do
+      if Git.get_status!(dest) != "" do
+        Git.add!(dest, ".")
+        Git.stash!(dest)
+      end
     else
       File.mkdir_p!(dest)
       Git.clone!(repo, dest)
