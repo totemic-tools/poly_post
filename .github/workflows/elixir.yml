@@ -10,8 +10,41 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build_unlocked:
+    name: Build and test with unlocked deps
+    runs-on: ubuntu-24.04
 
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.17.3'
+        otp-version: '27.1'
+
+    - name: Setup test git identity
+      run: |
+        git config --global user.email "github-ci@totemic.dev"
+        git config --global user.name "Github CI"
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+
+    - name: Unlock dependencies
+      run: mix deps.unlock --all
+
+    - name: Install dependencies
+      run: mix deps.get
+
+    - name: Run tests w/coveralls
+      run: mix coveralls
+
+  build:
     name: Build and test
     runs-on: ubuntu-24.04
 
