@@ -1,7 +1,10 @@
 defmodule PolyPost.Depots do
   use Supervisor
 
-  alias PolyPost.Depot
+  alias PolyPost.{
+    Depot,
+    Util
+  }
 
   @doc """
   Starts the Depot supervisor
@@ -28,14 +31,10 @@ defmodule PolyPost.Depots do
   # Private
 
   defp depots do
-    case get_config() do
+    case Util.get_config() do
       {:ok, config} -> get_child_specs(config)
       :error -> []
     end
-  end
-
-  defp get_config do
-    Application.fetch_env(:poly_post, :resources)
   end
 
   defp get_child_specs(config) do

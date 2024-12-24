@@ -4,7 +4,9 @@ defmodule PolyPost do
   alias PolyPost.{
     Builder,
     Depots,
-    Depot
+    Depot,
+    Resource,
+    Util
   }
 
   # API
@@ -73,7 +75,28 @@ defmodule PolyPost do
     |> Enum.each(fn {resource, _} -> Depot.clear(resource) end)
   end
 
+  @doc """
+  List all resources and their metadata
+  """
+  @doc since: "0.2.0"
+  @spec list_resources() :: {:ok, keyword(Resource.config())}
+  | {:error, :resources_not_found}
+  | {:error, :config_not_found}
+  def list_resources do
+    case Util.get_config() do
+      {:ok, config} -> get_resources(config)
+      :error -> {:error, :config_not_found}
+    end
+  end
+
   # Private
+
+  defp get_resources(config) do
+    case Keyword.fetch(config, :content) do
+      {:ok, content} -> {:ok, content}
+      :error -> {:error, :content_key_not_found}
+    end
+  end
 
   defp store_content(content, resource) do
     Enum.each(content, fn %{key: key} = data ->
