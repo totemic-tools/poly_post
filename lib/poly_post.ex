@@ -78,6 +78,7 @@ defmodule PolyPost do
   @doc """
   List all resources and their metadata
   """
+  @doc since: "0.2.0"
   @spec list_resources() :: {:ok, keyword(Resource.config())}
   | {:error, :resources_not_found}
   | {:error, :config_not_found}
