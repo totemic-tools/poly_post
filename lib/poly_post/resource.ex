@@ -9,6 +9,9 @@ defmodule PolyPost.Resource do
   @typedoc "The unique ID for an item belonging to a resource"
   @type key :: term()
 
+  @typedoc "The config for a resource"
+  @type config :: {name(), keyword()}
+
   @typedoc "The content belonging to an item (includes `key`)"
   @type content :: %{key: key()}
 

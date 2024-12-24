@@ -1,5 +1,6 @@
 defmodule PolyPostTest do
   use ExUnit.Case, async: false
+  use Mneme
 
   alias PolyPost.Depot
 
@@ -67,6 +68,17 @@ defmodule PolyPostTest do
       assert 2 = Depot.get_all(@resource) |> length()
       assert :ok = PolyPost.clear_all()
       assert 0 = Depot.get_all(@resource) |> length()
+    end
+  end
+
+  describe ".list_resources/0" do
+    test "it returns the list of configured resources" do
+      auto_assert {:ok,
+                   test_articles: [
+                     module: TestArticle,
+                     path:
+                       "/home/angelo/code/projects/totemic/poly_post/test/fixtures/test_articles/*.md"
+                   ]} <- PolyPost.list_resources()
     end
   end
 end
