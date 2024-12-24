@@ -10,7 +10,7 @@ defmodule PolyPost.Resource do
   @type key :: term()
 
   @typedoc "The config for a resource"
-  @type config :: {name(), keyword()}
+  @type config :: keyword()
 
   @typedoc "The content belonging to an item (includes `key`)"
   @type content :: %{key: key()}
