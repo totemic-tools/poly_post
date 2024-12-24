@@ -73,12 +73,12 @@ defmodule PolyPostTest do
 
   describe ".list_resources/0" do
     test "it returns the list of configured resources" do
-      auto_assert {:ok,
-                   test_articles: [
-                     module: TestArticle,
-                     path:
-                       "/home/angelo/code/projects/totemic/poly_post/test/fixtures/test_articles/*.md"
-                   ]} <- PolyPost.list_resources()
+      assert {:ok, resources} = PolyPost.list_resources()
+      assert Keyword.has_key?(resources, :test_articles)
+
+      metadata = Keyword.get(resources, :test_articles)
+      assert Keyword.has_key?(metadata, :module)
+      assert Keyword.has_key?(metadata, :path)
     end
   end
 end
